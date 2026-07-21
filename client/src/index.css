@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  min-height: 100vh;
+}
+
+.card-flip-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+}
+
+.card-flip-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  backface-visibility: hidden;
+}
+
+.card-face-back {
+  transform: rotateY(180deg);
+}
+
+/* 1단계: 모든 카드가 첫 번째 카드 위치(--gather-dx, --gather-dy)로 모여 한 더미로
+   겹쳐지고(크기는 원래 화면 카드 크기 그대로), 마지막에 "섞이는" 느낌을 주는 작은
+   흔들림으로 마무리한다. */
+@keyframes card-gather {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  70% {
+    transform: translate(var(--gather-dx, 0px), var(--gather-dy, 0px)) rotate(0deg);
+  }
+  80% {
+    transform: translate(calc(var(--gather-dx, 0px) + 3px), calc(var(--gather-dy, 0px) - 2px)) rotate(-2.5deg);
+  }
+  90% {
+    transform: translate(calc(var(--gather-dx, 0px) - 3px), calc(var(--gather-dy, 0px) + 2px)) rotate(2.5deg);
+  }
+  100% {
+    transform: translate(var(--gather-dx, 0px), var(--gather-dy, 0px)) rotate(0deg);
+  }
+}
+
+.card-gather-anim {
+  animation: card-gather 0.6s ease-in forwards;
+}
+
+/* 2단계: 모여 있던 자리(--gather-dx, --gather-dy)에서 제자리로, 카드마다 시차를 두고
+   한 장씩 펼쳐진다. */
+@keyframes card-spread {
+  0% {
+    transform: translate(var(--gather-dx, 0px), var(--gather-dy, 0px));
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.card-spread-anim {
+  animation: card-spread 90ms cubic-bezier(0.22, 1.4, 0.36, 1) both;
+}
