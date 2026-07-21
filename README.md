@@ -23,7 +23,9 @@ npm run dev
 
 ## 카드 이미지 출처
 
-카드 앞면 이미지는 [searge/tarot](https://github.com/searge/tarot) 저장소의 Rider-Waite-Smith 덱 스캔본을 사용했으며, 해당 저장소는 **CC BY-SA 4.0** 라이선스로 배포됩니다. 원본 라이더-웨이트 덱 자체는 퍼블릭 도메인입니다. 카드 뒷면 이미지는 직접 제작한 이미지입니다.
+카드 앞면 이미지는 [searge/tarot](https://github.com/searge/tarot) 저장소의 Rider-Waite-Smith 덱 스캔본을 사용했으며, 해당 저장소는 **CC BY-SA 4.0** 라이선스로 배포됩니다.<br>
+원본 라이더-웨이트 덱 자체는 퍼블릭 도메인입니다.<br>
+카드 뒷면 이미지는 직접 제작한 이미지입니다.
 
 ## 구조
 
