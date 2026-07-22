@@ -3,7 +3,13 @@
 @tailwind utilities;
 
 body {
-  min-height: 100vh;
+  min-height: 100vh; /* 구형 브라우저 fallback */
+  min-height: 100dvh; /* 모바일 주소창 높이 변화에 맞춰 동적으로 조정 */
+}
+
+.min-h-screen-dvh {
+  min-height: 100vh; /* 구형 브라우저 fallback */
+  min-height: 100dvh; /* 모바일 주소창 높이 변화에 맞춰 동적으로 조정 */
 }
 
 .card-flip-inner {

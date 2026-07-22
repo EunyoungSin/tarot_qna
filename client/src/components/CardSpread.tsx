@@ -82,9 +82,28 @@ function useFitToScreenLayout(totalCards: number) {
       setLayout(computeLayout(availableWidth, availableHeight, totalCards))
     }
 
+    // 모바일 브라우저는 스크롤 중 주소창이 접히고 펴지면서 innerWidth는 그대로인 채
+    // innerHeight만 바뀌는 resize를 반복 발생시킨다. 이걸 그대로 recompute에 반영하면
+    // 카드 크기가 커졌다 작아졌다 흔들리므로, width가 실제로 바뀐 경우(회전/창 크기 변경)만
+    // 반응하고 그마저도 debounce로 묶어 과도한 재계산을 막는다.
+    let lastWidth = window.innerWidth
+    let timeoutId: number | undefined
+
+    function handleResize() {
+      const currentWidth = window.innerWidth
+      if (currentWidth === lastWidth) return
+      lastWidth = currentWidth
+
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId)
+      timeoutId = window.setTimeout(recompute, 150)
+    }
+
     recompute()
-    window.addEventListener('resize', recompute)
-    return () => window.removeEventListener('resize', recompute)
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId)
+    }
   }, [totalCards])
 
   return { areaRef, ...layout }

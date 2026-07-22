@@ -65,7 +65,7 @@ export default function App() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-10">
+    <main className="min-h-screen-dvh px-4 py-10">
       {stage === 'question' && <QuestionForm onSubmit={handleQuestionSubmit} />}
 
       {stage === 'drawing' && (
