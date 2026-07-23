@@ -1,6 +1,6 @@
 # 타로에게 묻다
 
-React + TypeScript + Tailwind CSS 프론트엔드와 Express 백엔드(Node.js)로 구성된 타로 카드 리딩 웹입니다.<br>
+React + TypeScript + Tailwind CSS 프론트엔드와 Express 백엔드(Node.js)로 구성된 AI 타로 카드 리딩 웹입니다.<br>
 질문 유형과 리딩 방식(빠른 조언 3장 / 깊은 리딩 5장)을 고른 뒤 질문을 입력하고 78장의 카드 중 원하는 장수를 직접 골라 뽑으면, Groq API가 카드 전체를 하나의 흐름으로 엮어 결론과 상세 해석을 생성합니다.<br>
 https://tarot-qna.onrender.com/ 에서 확인 해 보실 수 있습니다.
 
