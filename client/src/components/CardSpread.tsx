@@ -63,6 +63,20 @@ function computeLayout(availableWidth: number, availableHeight: number, totalCar
     }
   }
 
+  // bestWidth가 MIN_CARD_WIDTH보다 작으면(세로 공간이 매우 부족한 경우) 아래에서
+  // 카드 너비를 MIN_CARD_WIDTH로 올려치게 되는데, 그 너비 그대로 bestCols장을 한 줄에
+  // 두면 가로 폭을 넘쳐서(스크롤도 안 되어) 화면 밖 카드는 클릭조차 할 수 없게 된다.
+  // 그래서 이 경우엔 MIN_CARD_WIDTH 기준으로 한 줄에 실제로 들어갈 수 있는 최대 열
+  // 개수로 bestCols를 다시 제한한다. 줄 수가 늘어나 세로 스크롤이 필요해질 수 있지만,
+  // 가로로 넘쳐 카드를 아예 선택할 수 없게 되는 것보다는 안전하다.
+  if (bestWidth < MIN_CARD_WIDTH) {
+    const maxColsAtMinWidth = Math.max(
+      1,
+      Math.floor((availableWidth / MIN_CARD_WIDTH - 1) / (1 - OVERLAP_RATIO) + 1),
+    )
+    bestCols = Math.min(bestCols, maxColsAtMinWidth)
+  }
+
   const cardWidth = Math.min(MAX_CARD_WIDTH, Math.max(MIN_CARD_WIDTH, bestWidth))
   const rowGap = cardWidth * ROW_GAP_RATIO + MIN_GAP_PX
   return { cardsPerRow: bestCols, cardWidth, rowGap }

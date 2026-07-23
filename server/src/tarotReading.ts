@@ -11,6 +11,31 @@ function hasForeignScript(text: string): boolean {
   return FOREIGN_SCRIPT_RE.test(text)
 }
 
+// 강제 치환 단계에서만 쓰는, 위보다 넓은 범위의 매칭용 정규식. 라틴 확장 문자(예:
+// 베트남어의 à, ệ 등)까지 포함해 외국어 "단어" 전체를 통째로 지워야, 글자 하나만
+// 지웠을 때 단어가 깨진 채로 남는 것을 막을 수 있다. 숫자는 한국어 문장에서도
+// 흔히 쓰이므로(예: "3개월") 제거 대상에서 제외한다.
+const FOREIGN_RUN_RE =
+  /[A-Za-zÀ-ɏḀ-ỿ一-鿿぀-ヿ฀-๿Ѐ-ӿ؀-ۿ]+/g
+
+/**
+ * 재시도를 다 써도 언어 혼입이 남아있을 때 쓰는 최후 수단.
+ * 외국어 문자가 이어지는 구간(단어 단위)을 통째로 지우고, 그 과정에서 생기는
+ * 이중 공백이나 "단어 삭제 후 공백+문장부호" 같은 자잘한 흔적을 정리한다.
+ * 지운 결과가 빈 문자열이 되면(극단적으로 전체가 외국어인 경우) 오히려 원문을
+ * 그대로 보여주는 것이 낫다고 보고 원본을 반환한다.
+ */
+function sanitizeForeignScript(text: string): string {
+  const cleaned = text
+    .replace(FOREIGN_RUN_RE, '')
+    .replace(/[^\S\n]{2,}/g, ' ')
+    .replace(/[ \t]+([,.!?])/g, '$1')
+    .replace(/[ \t]+\n/g, '\n')
+    .trim()
+
+  return cleaned.length > 0 ? cleaned : text.trim()
+}
+
 export type SpreadType = 'quick' | 'deep'
 
 export interface ReadingCardInput {
@@ -187,7 +212,11 @@ export async function getTarotReading(params: ReadingParams): Promise<TarotReadi
   }
 
   if (hasForeignScript(`${result.conclusion}\n${result.detail}`)) {
-    console.warn('언어 혼입이 계속 감지되지만 최대 재시도 횟수에 도달하여 마지막 응답을 그대로 반환합니다.')
+    console.warn('언어 혼입이 계속 감지되어 최대 재시도 횟수에 도달, 외국어 구간을 강제로 제거하고 반환합니다.')
+    result = {
+      conclusion: sanitizeForeignScript(result.conclusion),
+      detail: sanitizeForeignScript(result.detail),
+    }
   }
 
   return result
