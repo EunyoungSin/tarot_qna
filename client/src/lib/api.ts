@@ -28,7 +28,7 @@ export async function fetchReading(
       const data = await res.json()
       if (data?.error) message = data.error
     } catch {
-      // ignore parse failure, use default message
+      // 파싱 실패는 무시하고 기본 메시지를 사용한다
     }
     throw new Error(message)
   }
