@@ -23,6 +23,15 @@ npm run dev
 - 클라이언트: http://localhost:5173
 - 서버: http://localhost:3001 (클라이언트의 `/api` 요청은 Vite dev 서버가 프록시합니다)
 
+## 질문 작성 규칙
+
+명백히 답할 수 없는 입력만 걸러내는 최소한의 검사입니다(`client/src/utils/validateQuestion.ts`). 다음 조건을 모두 만족해야 제출할 수 있습니다:
+
+- 공백을 제외하고 10자 이상
+- 두 단어 이상으로 구성
+- 같은 문자가 3번 이상 연속 반복되지 않을 것 (숫자는 예외 — "26000원"처럼 정상적인 수치 표현은 허용)
+- "asdf", "qwer"처럼 의미 없이 나열한 알파벳이 아닐 것
+
 ## 카드 이미지 출처
 
 카드 앞면 이미지는 [searge/tarot](https://github.com/searge/tarot) 저장소의 Rider-Waite-Smith 덱 스캔본을 사용했으며, 해당 저장소는 **CC BY-SA 4.0** 라이선스로 배포됩니다.<br>
