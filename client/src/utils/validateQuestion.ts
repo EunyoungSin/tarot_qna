@@ -1,5 +1,7 @@
 // 같은 문자(자음/모음 포함)가 3번 이상 연속되면 걸러낸다 (예: "ㅇㅇㅇ", "ㅋㅋㅋㅋ", "aaaa").
-const REPEATED_CHAR_RE = /(.)\1{2,}/su
+// 숫자는 제외한다 — 안 그러면 "26000원"처럼 반복되는 0이 들어간 정상적인 가격/수치
+// 표현까지 스팸으로 오탐하게 된다.
+const REPEATED_CHAR_RE = /([^\d])\1{2,}/su
 
 // 흔한 키보드 옆줄 나열 문자열 (예: "asdf", "qwer", "zxcv").
 const KEYBOARD_ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm']
