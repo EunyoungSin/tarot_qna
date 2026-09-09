@@ -141,8 +141,12 @@ export default function CardSpread({ deck, cardCount, onCardsDrawn, onReshuffle 
   const overlapPx = cardWidth * OVERLAP_RATIO
 
   function handlePick(index: number) {
-    if (isShuffling || isComplete || selectedIndices.includes(index)) return
-    setSelectedIndices((prev) => [...prev, index])
+    if (isShuffling) return
+    setSelectedIndices((prev) => {
+      if (prev.includes(index)) return prev.filter((i) => i !== index)
+      if (prev.length >= cardCount) return prev
+      return [...prev, index]
+    })
   }
 
   function handleConfirm() {
