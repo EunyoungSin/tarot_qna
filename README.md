@@ -12,7 +12,7 @@ cp server/.env.example server/.env
 # server/.env 파일을 열어 GROQ_API_KEY 값을 채워주세요
 ```
 
-기본 모델은 `openai/gpt-oss-120b`이며, 다른 모델을 쓰고 싶다면 `server/.env`에 `GROQ_MODEL`을 설정하면 됩니다. 사용 가능한 모델 목록은 [Groq 콘솔](https://console.groq.com)에서 확인하세요 (Groq는 모델을 자주 교체/폐지합니다).
+모델은 우선순위 목록(`server/.env`의 `GROQ_MODEL_FALLBACKS`, 콤마 구분)으로 관리됩니다. 서버 시작 시 Groq에서 실제로 서비스 중인 모델을 조회해 목록 중 가장 먼저 매칭되는 모델을 사용하고, 런타임 중 사용 중이던 모델이 폐지(404)되면 다음 순위로 자동 전환합니다 — Groq가 예고 없이 모델을 폐지해도 서버가 죽지 않습니다. 기본 우선순위는 `openai/gpt-oss-120b,qwen/qwen3.6-27b,openai/gpt-oss-20b`이며, 사용 가능한 모델 목록은 [Groq 콘솔](https://console.groq.com)에서 확인할 수 있습니다.
 
 ## 실행
 
