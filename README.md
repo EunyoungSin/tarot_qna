@@ -12,6 +12,8 @@ cp server/.env.example server/.env
 # server/.env 파일을 열어 GROQ_API_KEY 값을 채워주세요
 ```
 
+기본 모델은 `openai/gpt-oss-120b`이며, 다른 모델을 쓰고 싶다면 `server/.env`에 `GROQ_MODEL`을 설정하면 됩니다. 사용 가능한 모델 목록은 [Groq 콘솔](https://console.groq.com)에서 확인하세요 (Groq는 모델을 자주 교체/폐지합니다).
+
 ## 실행
 
 ```bash
