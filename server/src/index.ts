@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import express from 'express'
 import cors from 'cors'
 import readingRouter from './routes/reading.js'
+import { initializeGroqModel } from './groqClient.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // 배포 시에는 이 서버 하나가 API와 빌드된 클라이언트 정적 파일을 함께 서빙한다.
@@ -30,9 +31,16 @@ app.use((req, res, next) => {
   res.sendFile(path.join(clientDistPath, 'index.html'))
 })
 
-app.listen(port, () => {
-  console.log(`Tarot API server listening on http://localhost:${port}`)
+async function start() {
   if (!process.env.GROQ_API_KEY) {
     console.warn('⚠️  GROQ_API_KEY is not set — /api/reading will fail until it is configured.')
+  } else {
+    await initializeGroqModel()
   }
-})
+
+  app.listen(port, () => {
+    console.log(`Tarot API server listening on http://localhost:${port}`)
+  })
+}
+
+start()

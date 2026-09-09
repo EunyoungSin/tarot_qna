@@ -1,4 +1,10 @@
-import { getGroqClient, GROQ_MODEL } from './groqClient.js'
+import {
+  getGroqClient,
+  getCurrentModel,
+  setCurrentModel,
+  getNextFallbackModel,
+  isModelNotFoundError,
+} from './groqClient.js'
 
 type ChatMessage = { role: 'system' | 'user' | 'assistant'; content: string }
 
@@ -91,19 +97,44 @@ ${cardLines}
 위 카드들을 하나로 엮어서 질문에 직접 답하는 통합된 타로 해석을, {"conclusion": "...", "detail": "..."} 형태의 JSON으로만 작성해주세요. detail 분량은 ${paragraphHint} 정도로 해주세요.`
 }
 
+/**
+ * 현재 모델로 Groq를 호출한다. 모델이 폐지/제거되어 404가 나면 우선순위 목록의 다음
+ * 모델로 즉시 재시도하고, 성공하면 그 모델을 이후 요청의 기본값으로 갱신한다.
+ * 모든 후보가 실패하면 마지막으로 받은 원본 에러를 그대로 던진다.
+ */
 async function requestReading(messages: ChatMessage[]): Promise<string> {
-  const completion = await getGroqClient().chat.completions.create({
-    model: GROQ_MODEL,
-    messages,
-    temperature: 0.7,
-    max_tokens: 1024,
-  })
+  let model = getCurrentModel()
 
-  const reading = completion.choices[0]?.message?.content?.trim()
-  if (!reading) {
-    throw new Error('Groq API로부터 해석 텍스트를 받지 못했습니다.')
+  for (;;) {
+    try {
+      const completion = await getGroqClient().chat.completions.create({
+        model,
+        messages,
+        temperature: 0.7,
+        max_tokens: 1024,
+      })
+
+      setCurrentModel(model)
+
+      const reading = completion.choices[0]?.message?.content?.trim()
+      if (!reading) {
+        throw new Error('Groq API로부터 해석 텍스트를 받지 못했습니다.')
+      }
+      return reading
+    } catch (err) {
+      if (!isModelNotFoundError(err)) {
+        throw err
+      }
+
+      const nextModel = getNextFallbackModel(model)
+      if (!nextModel) {
+        throw err
+      }
+
+      console.warn(`⚠️ 모델 ${model}가 사용 불가능하여 ${nextModel}로 자동 전환되었습니다.`)
+      model = nextModel
+    }
   }
-  return reading
 }
 
 // 모델이 지시를 어기고 JSON을 코드 블록(```json ... ```)으로 감싸는 경우를 대비한 방어적 처리.

@@ -8,5 +8,5 @@ services:
     envVars:
       - key: GROQ_API_KEY
         sync: false
-      - key: GROQ_MODEL
-        value: llama-3.3-70b-versatile
+      - key: GROQ_MODEL_FALLBACKS
+        value: openai/gpt-oss-120b,qwen/qwen3.6-27b,openai/gpt-oss-20b
